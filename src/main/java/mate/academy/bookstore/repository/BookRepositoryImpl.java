@@ -1,6 +1,7 @@
 package mate.academy.bookstore.repository;
 
 import jakarta.persistence.criteria.CriteriaQuery;
+import java.util.List;
 import mate.academy.bookstore.model.Book;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,10 +9,9 @@ import org.hibernate.Transaction;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import java.util.List;
 
 @Repository
-public class BookRepositoryImpl implements BookRepository{
+public class BookRepositoryImpl implements BookRepository {
     private final SessionFactory sessionFactory;
 
     @Autowired
@@ -28,15 +28,14 @@ public class BookRepositoryImpl implements BookRepository{
             transaction = session.beginTransaction();
             session.persist(book);
             transaction.commit();
-            return  book;
+            return book;
         } catch (Exception e) {
-            if(transaction != null) {
+            if (transaction != null) {
                 transaction.rollback();
             }
             throw new RuntimeException("Can't insert book into DB: " + book, e);
-        }
-        finally {
-            if(session != null) {
+        } finally {
+            if (session != null) {
                 session.close();
             }
         }
