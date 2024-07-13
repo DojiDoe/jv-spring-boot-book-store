@@ -1,12 +1,11 @@
 package mate.academy.bookstore.repository;
 
-import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.Query;
 import java.util.List;
 import mate.academy.bookstore.model.Book;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -44,10 +43,8 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public List<Book> findAll() {
         try (Session session = sessionFactory.openSession()) {
-            HibernateCriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Book> query = criteriaBuilder.createQuery(Book.class);
-            query.from(Book.class);
-            return session.createQuery(query).getResultList();
+            Query findAllBooksQuery = session.createQuery("from Book", Book.class);
+            return findAllBooksQuery.getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't get All books from DB", e);
         }
