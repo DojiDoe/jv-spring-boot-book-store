@@ -1,5 +1,6 @@
 package mate.academy.bookstore.repository;
 
+import exception.DataProcessingException;
 import jakarta.persistence.Query;
 import java.util.List;
 import mate.academy.bookstore.model.Book;
@@ -32,7 +33,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can't insert book into DB: " + book, e);
+            throw new DataProcessingException("Can't insert book into DB: " + book, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -46,7 +47,7 @@ public class BookRepositoryImpl implements BookRepository {
             Query findAllBooksQuery = session.createQuery("from Book", Book.class);
             return findAllBooksQuery.getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't get All books from DB", e);
+            throw new DataProcessingException("Can't get All books from DB", e);
         }
     }
 }
