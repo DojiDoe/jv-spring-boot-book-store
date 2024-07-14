@@ -1,8 +1,8 @@
 package mate.academy.bookstore.repository;
 
-import exception.DataProcessingException;
 import jakarta.persistence.Query;
 import java.util.List;
+import mate.academy.bookstore.exception.DataProcessingException;
 import mate.academy.bookstore.model.Book;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
