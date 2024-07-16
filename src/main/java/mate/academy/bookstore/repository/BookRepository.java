@@ -6,5 +6,7 @@ import mate.academy.bookstore.model.Book;
 public interface BookRepository {
     Book save(Book book);
 
+    Book getById(Long id);
+
     List<Book> findAll();
 }
