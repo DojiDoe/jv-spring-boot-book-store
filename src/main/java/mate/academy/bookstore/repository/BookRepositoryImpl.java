@@ -4,22 +4,23 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.exception.DataProcessingException;
 import mate.academy.bookstore.model.Book;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
 public class BookRepositoryImpl implements BookRepository {
-    private final SessionFactory sessionFactory;
     private final EntityManagerFactory entityManagerFactory;
 
     @Override
     public Book save(Book book) {
+        EntityManager entityManager = null;
         EntityTransaction transaction = null;
-        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
             transaction = entityManager.getTransaction();
             transaction.begin();
             entityManager.persist(book);
@@ -30,13 +31,17 @@ public class BookRepositoryImpl implements BookRepository {
                 transaction.rollback();
             }
             throw new DataProcessingException("Can't insert book into DB: " + book, e);
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
         }
     }
 
     @Override
-    public Book getById(Long id) {
+    public Optional<Book> getById(Long id) {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
-            return entityManager.find(Book.class, id);
+            return Optional.ofNullable(entityManager.find(Book.class, id));
         } catch (Exception e) {
             throw new DataProcessingException("Can't get All books from DB", e);
         }
