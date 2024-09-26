@@ -17,6 +17,7 @@ public class CreateBookRequestDto {
     @NotBlank
     private String author;
     @NotBlank
+    @NotNull
     @ISBN
     private String isbn;
     @Min(0)
