@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.BookDto;
 import mate.academy.bookstore.dto.BookSearchParametersDto;
 import mate.academy.bookstore.dto.CreateBookRequestDto;
+import mate.academy.bookstore.dto.UpdateBookRequestDto;
 import mate.academy.bookstore.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,5 +48,10 @@ public class BookController {
     @PostMapping
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto book) {
         return bookService.save(book);
+    }
+
+    @PutMapping
+    public BookDto updateBook(@RequestBody UpdateBookRequestDto book) {
+        return bookService.update(book);
     }
 }
