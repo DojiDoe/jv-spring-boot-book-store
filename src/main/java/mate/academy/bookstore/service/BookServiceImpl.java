@@ -1,7 +1,6 @@
 package mate.academy.bookstore.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.BookDto;
 import mate.academy.bookstore.dto.BookSearchParametersDto;
@@ -45,16 +44,16 @@ public class BookServiceImpl implements BookService {
     public List<BookDto> findAll(Pageable pageable) {
         return bookRepository.findAll(pageable).stream()
                 .map(bookMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<BookDto> search(BookSearchParametersDto params, Pageable pageable) {
-        Specification<Book> phoneSpecification = bookSpecificationBuilder.build(params);
-        return bookRepository.findAll(phoneSpecification, pageable)
+        Specification<Book> bookSpecification = bookSpecificationBuilder.build(params);
+        return bookRepository.findAll(bookSpecification, pageable)
                 .stream()
                 .map(bookMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
