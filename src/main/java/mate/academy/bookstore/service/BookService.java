@@ -16,7 +16,7 @@ public interface BookService {
 
     List<BookDto> findAll(Pageable pageable);
 
-    List<BookDto> search(BookSearchParametersDto params);
+    List<BookDto> search(BookSearchParametersDto params, Pageable pageable);
 
     BookDto update(UpdateBookRequestDto book);
 }

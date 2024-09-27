@@ -43,8 +43,8 @@ public class BookController {
     @GetMapping("/search")
     @Operation(summary = "get books by params", description = "Get a list of all"
             + " books with sent params")
-    public List<BookDto> searchBooks(BookSearchParametersDto params) {
-        return bookService.search(params);
+    public List<BookDto> searchBooks(BookSearchParametersDto params, Pageable pageable) {
+        return bookService.search(params,pageable);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
