@@ -4,6 +4,7 @@ import java.util.List;
 import mate.academy.bookstore.dto.BookDto;
 import mate.academy.bookstore.dto.BookSearchParametersDto;
 import mate.academy.bookstore.dto.CreateBookRequestDto;
+import mate.academy.bookstore.dto.UpdateBookRequestDto;
 
 public interface BookService {
     BookDto save(CreateBookRequestDto book);
@@ -14,5 +15,7 @@ public interface BookService {
 
     List<BookDto> findAll();
 
-    public List<BookDto> search(BookSearchParametersDto params);
+    List<BookDto> search(BookSearchParametersDto params);
+
+    BookDto update(UpdateBookRequestDto book);
 }
