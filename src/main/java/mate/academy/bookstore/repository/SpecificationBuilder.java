@@ -1,6 +1,6 @@
 package mate.academy.bookstore.repository;
 
-import mate.academy.bookstore.dto.BookSearchParametersDto;
+import mate.academy.bookstore.dto.book.BookSearchParametersDto;
 import mate.academy.bookstore.model.Book;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;

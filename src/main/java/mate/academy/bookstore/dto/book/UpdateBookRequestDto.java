@@ -1,4 +1,4 @@
-package mate.academy.bookstore.dto;
+package mate.academy.bookstore.dto.book;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,10 @@ import org.hibernate.validator.constraints.ISBN;
 
 @Getter
 @Setter
-public class CreateBookRequestDto {
+public class UpdateBookRequestDto {
+    @Min(0)
+    @NotNull
+    private Long id;
     @NotBlank
     private String title;
     @NotBlank
