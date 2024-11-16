@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-role-table
+      author: mateacademy
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role
+                  type: ENUM('ROLE_ADMIN','ROLE_USER','ROLE_MANAGER')
+                  defaultValue: ROLE_USER
+                  constraints:
+                    unique: true
+                    nullable: false
