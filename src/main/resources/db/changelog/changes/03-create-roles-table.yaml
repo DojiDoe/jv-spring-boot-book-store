@@ -15,8 +15,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: role
-                  type: ENUM('ROLE_ADMIN','ROLE_USER','ROLE_MANAGER')
-                  defaultValue: ROLE_USER
+                  type: varchar(255)
                   constraints:
                     unique: true
                     nullable: false

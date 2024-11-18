@@ -1,5 +1,6 @@
 package mate.academy.bookstore.service;
 
+import jakarta.transaction.Transactional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.user.UserRegistrationRequestDto;
@@ -22,12 +23,13 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
+    @Transactional
     public UserResponseDto register(UserRegistrationRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new RegistrationException("Can't register user");
         }
-        requestDto.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         User user = userMapper.toModel(requestDto);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Set.of(roleRepository.getRoleByRole(Role.RoleName.ROLE_USER)));
         userRepository.save(user);
         return userMapper.toDto(user);
