@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+        id: insert-admin-user
+        author: mateacedemy
+        changes:
+          - insert:
+              tableName: users
+              columns:
+                - column:
+                    name: id
+                    value: 1
+                - column:
+                    name: email
+                    value: "admin@gmail.com"
+                - column:
+                    name: password
+                    value: "$2a$10$Ul8.kr1zQbH8deHIXuGBzO1tlQYairNeXZ0MB0Mg7FYcOS.dcxU62"
+                - column:
+                    name: first_name
+                    value: "Admin"
+                - column:
+                    name: last_name
+                    value: "Shevchenko"
+                - column:
+                    name: shipping_address
+                    value: "123 Admin St."
