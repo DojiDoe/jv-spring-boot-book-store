@@ -6,17 +6,16 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
+import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
-    private Key secret;
-
-    private long expiration;
+    private final SecretKey secret;
+    private final long expiration;
 
     public JwtUtil(@Value("${jwt.secret}") String secretString,
                    @Value("${jwt.expiration}") long expiration) {
