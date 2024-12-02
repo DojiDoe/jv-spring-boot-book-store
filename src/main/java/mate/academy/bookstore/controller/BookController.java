@@ -48,7 +48,7 @@ public class BookController {
     @Operation(summary = "get books by params", description = "Get a list of all"
             + " books with sent params")
     public List<BookDto> searchBooks(BookSearchParametersDto params, Pageable pageable) {
-        return bookService.search(params,pageable);
+        return bookService.search(params, pageable);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
