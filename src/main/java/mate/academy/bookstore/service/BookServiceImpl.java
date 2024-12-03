@@ -3,6 +3,7 @@ package mate.academy.bookstore.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.book.BookDto;
+import mate.academy.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.bookstore.dto.book.BookSearchParametersDto;
 import mate.academy.bookstore.dto.book.CreateBookRequestDto;
 import mate.academy.bookstore.dto.book.UpdateBookRequestDto;
@@ -58,15 +59,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto update(UpdateBookRequestDto book) {
-        Book bookFromDB = bookRepository.findById(book.getId())
+        bookRepository.findById(book.getId())
                 .orElseThrow(()
                         -> new EntityNotFoundException("Can't get book by id " + book.getId()));
-        bookFromDB.setTitle(book.getTitle());
-        bookFromDB.setAuthor(book.getAuthor());
-        bookFromDB.setIsbn(book.getIsbn());
-        bookFromDB.setPrice(book.getPrice());
-        bookFromDB.setDescription(book.getDescription());
-        bookFromDB.setCoverImage(book.getCoverImage());
-        return bookMapper.toDto(bookRepository.save(bookFromDB));
+        return bookMapper.toDto(bookRepository.save(bookMapper.toModel(book)));
+    }
+
+    @Override
+    public List<BookDtoWithoutCategoryIds> findBooksByCategoryId(Long id) {
+        return bookRepository.findAllByCategoryId(id)
+                .stream()
+                .map(bookMapper::toDtoWithoutCategories)
+                .toList();
     }
 }
