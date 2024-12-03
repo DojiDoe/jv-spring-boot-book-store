@@ -1,7 +1,6 @@
 package mate.academy.bookstore.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.book.BookDto;
 import mate.academy.bookstore.dto.book.BookDtoWithoutCategoryIds;
@@ -77,6 +76,6 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAllByCategoryId(id)
                 .stream()
                 .map(bookMapper::toDtoWithoutCategories)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
