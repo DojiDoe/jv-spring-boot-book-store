@@ -47,6 +47,8 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteById(Long id) {
         if (categoryRepository.findById(id).isPresent()) {
             categoryRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("Can't get category by id " + id);
         }
     }
 }
