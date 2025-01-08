@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     @Transactional
@@ -31,7 +32,8 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toModel(requestDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Set.of(roleRepository.getRoleByRole(Role.RoleName.ROLE_USER)));
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        shoppingCartService.create(savedUser);
         return userMapper.toDto(user);
     }
 }
