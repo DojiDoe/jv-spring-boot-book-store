@@ -1,4 +1,13 @@
 package mate.academy.bookstore.dto.cartitem;
 
-public record CreateCartItemRequestDto(Long bookId, Integer quantity) {
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
+public record CreateCartItemRequestDto(
+        @NotNull
+        Long bookId,
+        @Min(1)
+        @NotNull
+        Integer quantity
+) {
 }

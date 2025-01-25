@@ -1,5 +1,7 @@
 package mate.academy.bookstore.service;
 
+import jakarta.transaction.Transactional;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.cartitem.CreateCartItemRequestDto;
 import mate.academy.bookstore.dto.cartitem.UpdateShoppingCartItemRequestDto;
@@ -31,15 +33,30 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional
     public ShoppingCartDto addCartItem(CreateCartItemRequestDto requestDto, Long userId) {
         ShoppingCart shoppingFromDB = getShoppingCartFromDB(userId);
+        Optional<CartItem> cartItemFromDb = checkIfCartItemAlreadyExist(requestDto, shoppingFromDB);
         CartItem itemToAdd = cartItemMapper.toModel(requestDto);
         itemToAdd.setShoppingCart(shoppingFromDB);
+        if (cartItemFromDb.isPresent()) {
+            itemToAdd.setId(cartItemFromDb.get().getId());
+            itemToAdd.setQuantity(cartItemFromDb.get().getQuantity() + itemToAdd.getQuantity());
+        }
         cartItemRepository.save(itemToAdd);
         return getShoppingCartByUserId(userId);
     }
 
+    private static Optional<CartItem> checkIfCartItemAlreadyExist(
+            CreateCartItemRequestDto requestDto,
+            ShoppingCart shoppingFromDB) {
+        return shoppingFromDB.getCartItems().stream()
+                .filter(c -> c.getBook().getId().equals(requestDto.bookId()))
+                .findFirst();
+    }
+
     @Override
+    @Transactional
     public ShoppingCartDto updateShoppingCart(Long cartItemId,
                                               UpdateShoppingCartItemRequestDto requestDto,
                                               Long userId) {
@@ -58,7 +75,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCartDto getShoppingCartByUserId(Long userId) {
-        System.out.println(shoppingCartMapper.toDto(getShoppingCartFromDB(userId)));
         return shoppingCartMapper.toDto(getShoppingCartFromDB(userId));
     }
 

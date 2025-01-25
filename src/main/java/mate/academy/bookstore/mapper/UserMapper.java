@@ -7,10 +7,8 @@ import mate.academy.bookstore.dto.user.UserResponseDto;
 import mate.academy.bookstore.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
-import org.springframework.stereotype.Component;
 
 @Mapper(config = MapperConfig.class)
-@Component
 public interface UserMapper {
     UserResponseDto toDto(User user);
 
