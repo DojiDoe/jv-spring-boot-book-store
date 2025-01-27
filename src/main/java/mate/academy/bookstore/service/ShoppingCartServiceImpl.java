@@ -2,6 +2,7 @@ package mate.academy.bookstore.service;
 
 import jakarta.transaction.Transactional;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.bookstore.dto.cartitem.CreateCartItemRequestDto;
 import mate.academy.bookstore.dto.cartitem.UpdateShoppingCartItemRequestDto;
@@ -39,20 +40,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Optional<CartItem> cartItemFromDb = checkIfCartItemAlreadyExist(requestDto, shoppingFromDB);
         CartItem itemToAdd = cartItemMapper.toModel(requestDto);
         itemToAdd.setShoppingCart(shoppingFromDB);
+        Set<CartItem> cartItems = shoppingFromDB.getCartItems();
         if (cartItemFromDb.isPresent()) {
-            itemToAdd.setId(cartItemFromDb.get().getId());
-            itemToAdd.setQuantity(cartItemFromDb.get().getQuantity() + itemToAdd.getQuantity());
+            CartItem cartItem = cartItemFromDb.get();
+            cartItems.remove(cartItem);
+            itemToAdd.setId(cartItem.getId());
+            itemToAdd.setQuantity(cartItem.getQuantity() + itemToAdd.getQuantity());
         }
-        cartItemRepository.save(itemToAdd);
-        return getShoppingCartByUserId(userId);
-    }
-
-    private static Optional<CartItem> checkIfCartItemAlreadyExist(
-            CreateCartItemRequestDto requestDto,
-            ShoppingCart shoppingFromDB) {
-        return shoppingFromDB.getCartItems().stream()
-                .filter(c -> c.getBook().getId().equals(requestDto.bookId()))
-                .findFirst();
+        cartItems.add(itemToAdd);
+        shoppingFromDB.setCartItems(cartItems);
+        return shoppingCartMapper.toDto(shoppingCartRepository.save(shoppingFromDB));
     }
 
     @Override
@@ -76,6 +73,14 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCartDto getShoppingCartByUserId(Long userId) {
         return shoppingCartMapper.toDto(getShoppingCartFromDB(userId));
+    }
+
+    private static Optional<CartItem> checkIfCartItemAlreadyExist(
+            CreateCartItemRequestDto requestDto,
+            ShoppingCart shoppingFromDB) {
+        return shoppingFromDB.getCartItems().stream()
+                .filter(item -> item.getBook().getId().equals(requestDto.bookId()))
+                .findFirst();
     }
 
     private ShoppingCart getShoppingCartFromDB(Long userId) {
