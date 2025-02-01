@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -32,14 +33,15 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status = Status.ORDER_CREATED;
+    private Status status = Status.CREATED;
     @Column(nullable = false)
     private BigDecimal total;
     @Column(nullable = false)
-    private LocalDateTime orderDate;
+    private LocalDateTime orderDate = LocalDateTime.now();
     @Column(nullable = false)
     private String shippingAddress;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,8 +50,8 @@ public class Order {
     private boolean isDeleted = false;
 
     public enum Status {
-        ORDER_CREATED,
-        ORDER_PROCESSING,
-        ORDER_DELIVERED
+        CREATED,
+        PROCESSING,
+        DELIVERED
     }
 }

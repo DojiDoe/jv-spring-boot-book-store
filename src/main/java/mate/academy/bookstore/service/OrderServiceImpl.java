@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class OrderServiceImpl implements OrderService {
-
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ShoppingCartRepository shoppingCartRepository;
@@ -36,6 +35,10 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto save(PlaceOrderRequestDto requestDto, Long userId) {
         Order order = new Order();
         ShoppingCart cart = shoppingCartRepository.findByUserId(userId);
+        if (cart.getCartItems().isEmpty()) {
+            throw new EntityNotFoundException("Can't find cart"
+                    + " items in shopping cart with id: " + cart.getId());
+        }
 
         order.setUser(userRepository.findById(userId).orElseThrow(() ->
                 new EntityNotFoundException("Can't find a user with id: " + userId)));
@@ -61,7 +64,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> findAll(Long userId) {
         return orderRepository.findAllByUserId(userId).stream()
-                .map(orderMapper::toDto).toList();
+                .map(orderMapper::toDto)
+                .toList();
     }
 
     @Override

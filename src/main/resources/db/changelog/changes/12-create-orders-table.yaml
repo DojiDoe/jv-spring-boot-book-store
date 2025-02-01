@@ -21,7 +21,7 @@ databaseChangeLog:
               - column:
                   name: status
                   type: varchar(255)
-                  defaultValue: 'ORDER_CREATED'
+                  defaultValue: 'ORDER'
                   constraints:
                     nullable: false
               - column:
@@ -32,6 +32,7 @@ databaseChangeLog:
               - column:
                   name: order_date
                   type: datetime
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
               - column:
