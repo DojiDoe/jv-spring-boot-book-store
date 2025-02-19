@@ -7,12 +7,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.ISBN;
 
 @Getter
 @Setter
+@Builder
 public class UpdateBookRequestDto {
     @Min(0)
     @NotNull

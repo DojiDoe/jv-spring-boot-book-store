@@ -18,7 +18,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> findAll(Pageable pageable) {
-        return categoryRepository.findAll().stream()
+        return categoryRepository.findAll(pageable).stream()
                 .map(categoryMapper::toDto)
                 .toList();
     }
@@ -38,6 +38,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto update(Long id, CategoryDto categoryDto) {
+        if (categoryRepository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException("Can't get category by id " + id);
+        }
         Category category = categoryMapper.toModel(categoryDto);
         category.setId(id);
         return categoryMapper.toDto(categoryRepository.save(category));
