@@ -3,6 +3,7 @@ package mate.academy.bookstore.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -10,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -21,6 +21,7 @@ import mate.academy.bookstore.dto.book.BookDto;
 import mate.academy.bookstore.dto.book.CreateBookRequestDto;
 import mate.academy.bookstore.exception.EntityNotFoundException;
 import mate.academy.bookstore.service.BookService;
+import mate.academy.bookstore.util.BookTestUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,13 +42,13 @@ import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BookControllerTest {
-    public static final String INSERT_CATEGORIES_SCRIPT =
-            "database/categories/insert-categories.sql";
-    public static final String INSERT_BOOKS_SCRIPT =
-            "database/books/insert-books.sql";
-    public static final String CLEAN_UP_SCRIPT =
-            "database/clean-up-data.sql";
     protected static MockMvc mockMvc;
+    private static final String INSERT_CATEGORIES_SCRIPT =
+            "database/categories/insert-categories.sql";
+    private static final String INSERT_BOOKS_SCRIPT =
+            "database/books/insert-books.sql";
+    private static final String CLEAN_UP_SCRIPT =
+            "database/clean-up-data.sql";
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -80,34 +81,7 @@ public class BookControllerTest {
     @DisplayName("Get all books as user with pagination")
     void getAll_ValidData_ShouldReturnListOfBookDto() throws Exception {
         // Given
-        List<BookDto> expected = Arrays.asList(
-                BookDto.builder()
-                        .id(1L)
-                        .title("1984")
-                        .author("George Orwell")
-                        .isbn("978-0-596-52068-7")
-                        .price(BigDecimal.valueOf(10))
-                        .description("Dystopian vision of the future")
-                        .coverImage("Cover image of eye")
-                        .build(),
-                BookDto.builder()
-                        .id(2L)
-                        .title("Animal Farm")
-                        .author("George Orwell")
-                        .isbn("978-0-596-52069-4")
-                        .price(BigDecimal.valueOf(7))
-                        .description("Dystopian vision of the future for kids")
-                        .coverImage("Cover image of pig")
-                        .build(),
-                BookDto.builder()
-                        .id(3L)
-                        .title("I see that you are interested in darkness")
-                        .author("Ilarion Pavliuk")
-                        .isbn("978-0-596-52077-9")
-                        .price(BigDecimal.valueOf(9))
-                        .description("impenetrable human indifference and the darkness within us")
-                        .coverImage("Cover image of eye")
-                        .build());
+        List<BookDto> expected = BookTestUtil.createListOfBookDtoValues();
         // When
         MvcResult result = mockMvc.perform(get("/books")
                         .param("page", String.valueOf(0))
@@ -121,7 +95,7 @@ public class BookControllerTest {
         List<BookDto> actual = Arrays.stream(content).toList();
         assertEquals(3, content.length);
         for (int i = 0; i < actual.size(); i++) {
-            EqualsBuilder.reflectionEquals(expected.get(i), actual.get(i));
+            assertTrue(EqualsBuilder.reflectionEquals(expected.get(i), actual.get(i)));
         }
     }
 
@@ -131,15 +105,7 @@ public class BookControllerTest {
     void getBookById_ValidId_ShouldReturnBookDto() throws Exception {
         // Given
         Long bookIdToRetrieve = 1L;
-        BookDto expected = BookDto.builder()
-                .id(1L)
-                .title("1984")
-                .author("George Orwell")
-                .isbn("978-0-596-52068-7")
-                .price(BigDecimal.valueOf(10))
-                .description("Dystopian vision of the future")
-                .coverImage("Cover image of eye")
-                .build();
+        BookDto expected = BookTestUtil.createBookDtoValue();
         // When
         MvcResult result = mockMvc.perform(get("/books/{id}", bookIdToRetrieve)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -150,7 +116,7 @@ public class BookControllerTest {
                 BookDto.class);
         assertNotNull(actual);
         assertNotNull(actual.getId());
-        EqualsBuilder.reflectionEquals(expected, actual);
+        assertTrue(EqualsBuilder.reflectionEquals(expected, actual));
     }
 
     @Test
@@ -172,15 +138,7 @@ public class BookControllerTest {
     @DisplayName("Create a new book with valid as admin")
     void createBook_ValidRequestDto_ShouldReturnBookDto() throws Exception {
         // Given
-        CreateBookRequestDto requestDto = CreateBookRequestDto.builder()
-                .title("It")
-                .author("Steven King")
-                .isbn("978-0-596-52074-8")
-                .price(BigDecimal.valueOf(12.99))
-                .description("Demon clown")
-                .coverImage("Cover image of clown")
-                .categoryIds(List.of(1L))
-                .build();
+        CreateBookRequestDto requestDto = BookTestUtil.createBookRequestDtoValue();
         BookDto expected = BookDto.builder()
                 .id(4L)
                 .title(requestDto.getTitle())
@@ -189,7 +147,7 @@ public class BookControllerTest {
                 .price(requestDto.getPrice())
                 .description(requestDto.getDescription())
                 .coverImage(requestDto.getCoverImage())
-                .categoryIds(List.of(1L))
+                .categoryIds(requestDto.getCategoryIds())
                 .build();
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
         // When
@@ -205,7 +163,7 @@ public class BookControllerTest {
                 BookDto.class);
         assertNotNull(actual);
         assertNotNull(actual.getId());
-        EqualsBuilder.reflectionEquals(expected, actual, "id");
+        assertTrue(EqualsBuilder.reflectionEquals(expected, actual, "categoryIds"));
     }
 
     @AfterEach

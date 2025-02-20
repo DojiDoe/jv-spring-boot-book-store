@@ -3,6 +3,7 @@ package mate.academy.bookstore.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -19,6 +20,7 @@ import lombok.SneakyThrows;
 import mate.academy.bookstore.dto.category.CategoryDto;
 import mate.academy.bookstore.exception.EntityNotFoundException;
 import mate.academy.bookstore.service.CategoryService;
+import mate.academy.bookstore.util.CategoryTestUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,11 +41,11 @@ import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CategoryControllerTest {
-    public static final String INSERT_CATEGORIES_SCRIPT =
-            "database/categories/insert-categories.sql";
-    public static final String CLEAN_UP_SCRIPT =
-            "database/clean-up-data.sql";
     protected static MockMvc mockMvc;
+    private static final String INSERT_CATEGORIES_SCRIPT =
+            "database/categories/insert-categories.sql";
+    private static final String CLEAN_UP_SCRIPT =
+            "database/clean-up-data.sql";
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -74,7 +76,7 @@ public class CategoryControllerTest {
     @DisplayName("Create a new category as admin")
     void createCategory_ValidRequestDto_ShouldReturnBookDto() throws Exception {
         // Given
-        CategoryDto requestDto = new CategoryDto("Drama", "Drama desc");
+        CategoryDto requestDto = CategoryTestUtil.createCategoryDto();
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
         // When
         MvcResult result = mockMvc.perform(post("/categories")
@@ -86,7 +88,7 @@ public class CategoryControllerTest {
         CategoryDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 CategoryDto.class);
         assertNotNull(actual);
-        EqualsBuilder.reflectionEquals(requestDto, actual);
+        assertTrue(EqualsBuilder.reflectionEquals(requestDto, actual));
     }
 
     @Test
@@ -94,10 +96,7 @@ public class CategoryControllerTest {
     @DisplayName("Get all categories as user with pagination")
     void getAll_ValidData_ShouldReturnListOfCategoryDto() throws Exception {
         // Given
-        List<CategoryDto> expected = Arrays.asList(
-                new CategoryDto("Drama", "Drama desc"),
-                new CategoryDto("Horror", "Horror desc"),
-                new CategoryDto("Comedy", "Comedy desc"));
+        List<CategoryDto> expected = CategoryTestUtil.createListOfCategoryDtoValues();
         // When
         MvcResult result = mockMvc.perform(get("/categories")
                         .param("page", String.valueOf(0))
@@ -118,7 +117,7 @@ public class CategoryControllerTest {
     void getCategoryById_ValidId_ShouldReturnCategoryDto() throws Exception {
         // Given
         Long categoryIdToRetrieve = 1L;
-        CategoryDto expected = new CategoryDto("Drama", "Drama desc");
+        CategoryDto expected = CategoryTestUtil.createCategoryDto();
         // When
         MvcResult result = mockMvc.perform(get("/categories/{id}", categoryIdToRetrieve)
                         .contentType(MediaType.APPLICATION_JSON))

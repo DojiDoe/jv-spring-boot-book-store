@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import mate.academy.bookstore.dto.category.CategoryDto;
@@ -17,6 +16,7 @@ import mate.academy.bookstore.exception.EntityNotFoundException;
 import mate.academy.bookstore.mapper.CategoryMapper;
 import mate.academy.bookstore.model.Category;
 import mate.academy.bookstore.repository.CategoryRepository;
+import mate.academy.bookstore.util.CategoryTestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
+    public static final String EntityNotFoundExceptionMessage = "Can't get category by id ";
     @Mock
     private CategoryRepository categoryRepository;
     @Mock
@@ -43,18 +44,7 @@ public class CategoryServiceTest {
     public void findAll_ValidPageable_ShouldReturnListOfCategoryDto() {
         //Given
         Pageable pageable = PageRequest.of(0, 10);
-        List<Category> categoryFromDB = Arrays.asList(
-                Category.builder()
-                        .id(1L)
-                        .name("Drama")
-                        .description("Drama desc")
-                        .build(),
-                Category.builder()
-                        .id(2L)
-                        .name("Fiction")
-                        .description("Fiction desc")
-                        .build()
-        );
+        List<Category> categoryFromDB = CategoryTestUtil.createListOfCategoryValues();
         when(categoryRepository.findAll(pageable)).thenReturn(new PageImpl<>(categoryFromDB));
         when(categoryMapper.toDto(any(Category.class))).thenAnswer(invocation -> {
             Category category = invocation.getArgument(0);
@@ -63,7 +53,7 @@ public class CategoryServiceTest {
         // When
         List<CategoryDto> resultsDto = categoryService.findAll(pageable);
         // Then
-        assertThat(resultsDto).hasSize(2);
+        assertThat(resultsDto).hasSize(3);
         assertThat(resultsDto.get(0).name()).isEqualTo(categoryFromDB.get(0).getName());
         assertThat(resultsDto.get(1).description())
                 .isEqualTo(categoryFromDB.get(1).getDescription());
@@ -97,7 +87,7 @@ public class CategoryServiceTest {
     @DisplayName("Verify whether CategoryDto is valid when calling save() method")
     public void save_ValidCreateBookRequestDto_ReturnsBookDto() {
         // Given
-        CategoryDto categoryDto = new CategoryDto("Drama", "Drama desc");
+        CategoryDto categoryDto = CategoryTestUtil.createCategoryDto();
         Category category = Category.builder()
                 .id(1L)
                 .name(categoryDto.name())
@@ -120,7 +110,7 @@ public class CategoryServiceTest {
     public void updateCategory_InvalidCategoryDto_ShouldThrowEntityNotFoundException() {
         // Given
         Long invalidId = 100L;
-        CategoryDto categoryDto = new CategoryDto("Drama", "Drama   desc");
+        CategoryDto categoryDto = CategoryTestUtil.createCategoryDto();
         when(categoryRepository.findById(invalidId)).thenReturn(Optional.empty());
         // When
         Exception exception = assertThrows(
@@ -148,7 +138,7 @@ public class CategoryServiceTest {
                 () -> categoryService.deleteById(invalidId)
         );
         // Then
-        String expected = "Can't get category by id " + invalidId;
+        String expected = EntityNotFoundExceptionMessage + invalidId;
         String actual = exception.getMessage();
         assertThat(actual).isEqualTo(expected);
         verify(categoryRepository, times(1)).findById(invalidId);
