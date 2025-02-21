@@ -3,12 +3,10 @@ package mate.academy.bookstore.dto.order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import mate.academy.bookstore.model.Order;
 
-@Getter
-@Setter
+@Data
 public class OrderDto {
     private Long id;
     private Long userId;

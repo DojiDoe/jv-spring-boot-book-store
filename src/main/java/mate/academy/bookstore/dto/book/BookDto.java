@@ -2,13 +2,11 @@ package mate.academy.bookstore.dto.book;
 
 import java.math.BigDecimal;
 import java.util.List;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
-@Getter
-@Setter
-@Builder
+@Data
+@Accessors(chain = true)
 public class BookDto {
     private Long id;
     private String title;

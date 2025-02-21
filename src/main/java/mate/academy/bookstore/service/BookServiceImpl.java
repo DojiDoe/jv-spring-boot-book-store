@@ -6,7 +6,6 @@ import mate.academy.bookstore.dto.book.BookDto;
 import mate.academy.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.bookstore.dto.book.BookSearchParametersDto;
 import mate.academy.bookstore.dto.book.CreateBookRequestDto;
-import mate.academy.bookstore.dto.book.UpdateBookRequestDto;
 import mate.academy.bookstore.exception.EntityNotFoundException;
 import mate.academy.bookstore.mapper.BookMapper;
 import mate.academy.bookstore.model.Book;
@@ -58,11 +57,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto update(UpdateBookRequestDto book) {
-        bookRepository.findById(book.getId())
+    public BookDto update(Long id, CreateBookRequestDto requestDto) {
+        Book bookFromDB = bookRepository.findById(id)
                 .orElseThrow(()
-                        -> new EntityNotFoundException("Can't get book by id " + book.getId()));
-        return bookMapper.toDto(bookRepository.save(bookMapper.toModel(book)));
+                        -> new EntityNotFoundException("Can't get book by id " + id));
+        bookMapper.updateFromDto(bookFromDB,requestDto);
+        return bookMapper.toDto(bookRepository.save(bookFromDB));
     }
 
     @Override

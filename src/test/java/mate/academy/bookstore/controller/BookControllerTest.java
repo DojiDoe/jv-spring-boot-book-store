@@ -5,10 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
@@ -22,7 +23,6 @@ import mate.academy.bookstore.dto.book.CreateBookRequestDto;
 import mate.academy.bookstore.exception.EntityNotFoundException;
 import mate.academy.bookstore.service.BookService;
 import mate.academy.bookstore.util.BookTestUtil;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +38,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BookControllerTest {
@@ -95,7 +94,7 @@ public class BookControllerTest {
         List<BookDto> actual = Arrays.stream(content).toList();
         assertEquals(3, content.length);
         for (int i = 0; i < actual.size(); i++) {
-            assertTrue(EqualsBuilder.reflectionEquals(expected.get(i), actual.get(i)));
+            assertTrue(reflectionEquals(expected.get(i), actual.get(i)));
         }
     }
 
@@ -116,7 +115,7 @@ public class BookControllerTest {
                 BookDto.class);
         assertNotNull(actual);
         assertNotNull(actual.getId());
-        assertTrue(EqualsBuilder.reflectionEquals(expected, actual));
+        assertTrue(reflectionEquals(expected, actual));
     }
 
     @Test
@@ -126,7 +125,7 @@ public class BookControllerTest {
         // Given
         Long bookIdToDelete = 1L;
         // When
-        mockMvc.perform(put("/books/{id}", bookIdToDelete)
+        mockMvc.perform(delete("/books/{id}", bookIdToDelete)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
         // Then
@@ -139,16 +138,15 @@ public class BookControllerTest {
     void createBook_ValidRequestDto_ShouldReturnBookDto() throws Exception {
         // Given
         CreateBookRequestDto requestDto = BookTestUtil.createBookRequestDtoValue();
-        BookDto expected = BookDto.builder()
-                .id(4L)
-                .title(requestDto.getTitle())
-                .author(requestDto.getAuthor())
-                .isbn(requestDto.getIsbn())
-                .price(requestDto.getPrice())
-                .description(requestDto.getDescription())
-                .coverImage(requestDto.getCoverImage())
-                .categoryIds(requestDto.getCategoryIds())
-                .build();
+        BookDto expected = new BookDto()
+                .setId(4L)
+                .setTitle(requestDto.getTitle())
+                .setAuthor(requestDto.getAuthor())
+                .setIsbn(requestDto.getIsbn())
+                .setPrice(requestDto.getPrice())
+                .setDescription(requestDto.getDescription())
+                .setCoverImage(requestDto.getCoverImage())
+                .setCategoryIds(requestDto.getCategoryIds());
         String jsonRequest = objectMapper.writeValueAsString(requestDto);
         // When
         MvcResult result = mockMvc.perform(
@@ -163,16 +161,11 @@ public class BookControllerTest {
                 BookDto.class);
         assertNotNull(actual);
         assertNotNull(actual.getId());
-        assertTrue(EqualsBuilder.reflectionEquals(expected, actual, "categoryIds"));
+        assertTrue(reflectionEquals(expected, actual, "categoryIds"));
     }
 
     @AfterEach
     void tearDown(@Autowired DataSource dataSource) {
-        teardown(dataSource);
-    }
-
-    @AfterAll
-    static void afterAll(@Autowired DataSource dataSource) {
         teardown(dataSource);
     }
 

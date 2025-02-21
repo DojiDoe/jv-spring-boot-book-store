@@ -2,6 +2,7 @@ package mate.academy.bookstore.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 
 import java.util.List;
 import mate.academy.bookstore.model.Book;
@@ -15,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.jdbc.Sql;
-import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -60,7 +60,7 @@ public class BookRepositoryTest {
         List<Book> actual = bookRepository.findAllByCategoryId(validCategoryId);
         Book expected = BookTestUtil.createBook();
         assertEquals(3, actual.size());
-        assertTrue(EqualsBuilder.reflectionEquals(expected, actual.get(0), "categories"));
+        assertTrue(reflectionEquals(expected, actual.get(0), "categories"));
         assertEquals("Animal Farm", actual.get(1).getTitle());
         assertEquals("Ilarion Pavliuk", actual.get(2).getAuthor());
     }

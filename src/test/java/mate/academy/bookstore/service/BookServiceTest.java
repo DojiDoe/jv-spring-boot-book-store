@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import mate.academy.bookstore.dto.book.BookDto;
 import mate.academy.bookstore.dto.book.CreateBookRequestDto;
-import mate.academy.bookstore.dto.book.UpdateBookRequestDto;
 import mate.academy.bookstore.exception.EntityNotFoundException;
 import mate.academy.bookstore.mapper.BookMapper;
 import mate.academy.bookstore.model.Book;
@@ -137,13 +136,13 @@ public class BookServiceTest {
     public void updateBook_InvalidUpdateRequestDto_ShouldThrowEntityNotFoundException() {
         // Given
         Long invalidId = 100L;
-        UpdateBookRequestDto requestDto = BookTestUtil
-                .createInvalidUpdateRequestDtoValue(invalidId);
+        CreateBookRequestDto requestDto = BookTestUtil
+                .createBookRequestDtoValue();
         Mockito.when(bookRepository.findById(invalidId)).thenReturn(Optional.empty());
         // When
         Exception exception = assertThrows(
                 EntityNotFoundException.class,
-                () -> bookService.update(requestDto)
+                () -> bookService.update(invalidId, requestDto)
         );
         // Then
         String expected = "Can't get book by id " + invalidId;

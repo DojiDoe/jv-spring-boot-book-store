@@ -5,7 +5,6 @@ import mate.academy.bookstore.dto.book.BookDto;
 import mate.academy.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import mate.academy.bookstore.dto.book.BookSearchParametersDto;
 import mate.academy.bookstore.dto.book.CreateBookRequestDto;
-import mate.academy.bookstore.dto.book.UpdateBookRequestDto;
 import org.springframework.data.domain.Pageable;
 
 public interface BookService {
@@ -19,7 +18,7 @@ public interface BookService {
 
     List<BookDto> search(BookSearchParametersDto params, Pageable pageable);
 
-    BookDto update(UpdateBookRequestDto book);
+    BookDto update(Long id, CreateBookRequestDto book);
 
     List<BookDtoWithoutCategoryIds> findBooksByCategoryId(Long id);
 }

@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
@@ -21,7 +22,6 @@ import mate.academy.bookstore.dto.category.CategoryDto;
 import mate.academy.bookstore.exception.EntityNotFoundException;
 import mate.academy.bookstore.service.CategoryService;
 import mate.academy.bookstore.util.CategoryTestUtil;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CategoryControllerTest {
@@ -88,7 +87,7 @@ public class CategoryControllerTest {
         CategoryDto actual = objectMapper.readValue(result.getResponse().getContentAsString(),
                 CategoryDto.class);
         assertNotNull(actual);
-        assertTrue(EqualsBuilder.reflectionEquals(requestDto, actual));
+        assertTrue(reflectionEquals(requestDto, actual));
     }
 
     @Test
@@ -147,11 +146,6 @@ public class CategoryControllerTest {
 
     @AfterEach
     void tearDown(@Autowired DataSource dataSource) {
-        teardown(dataSource);
-    }
-
-    @AfterAll
-    static void afterAll(@Autowired DataSource dataSource) {
         teardown(dataSource);
     }
 
