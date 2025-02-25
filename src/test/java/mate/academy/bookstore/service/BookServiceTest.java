@@ -52,7 +52,7 @@ public class BookServiceTest {
         BookDto savedBookDto = bookService.save(requestDto);
         //Then
         assertThat(savedBookDto).isEqualTo(bookDto);
-        verify(bookRepository, times(1)).save(book);
+        verify(bookRepository).save(book);
         verifyNoMoreInteractions(bookRepository, bookMapper);
     }
 
@@ -69,7 +69,7 @@ public class BookServiceTest {
         BookDto actual = bookService.getById(1L);
         //Then
         assertThat(actual).isEqualTo(bookDto);
-        verify(bookRepository, Mockito.times(1)).findById(1L);
+        verify(bookRepository).findById(1L);
         verifyNoMoreInteractions(bookRepository, bookMapper);
     }
 
@@ -89,7 +89,7 @@ public class BookServiceTest {
         String expected = "Can't get book by id " + invalidId;
         String actual = exception.getMessage();
         assertEquals(expected, actual);
-        verify(bookRepository, times(1)).findById(invalidId);
+        verify(bookRepository).findById(invalidId);
         verifyNoMoreInteractions(bookRepository);
 
     }
@@ -103,7 +103,7 @@ public class BookServiceTest {
         // When
         bookService.deleteById(bookId);
         // Then
-        verify(bookRepository, times(1)).deleteById(bookId);
+        verify(bookRepository).deleteById(bookId);
         verifyNoMoreInteractions(bookRepository);
     }
 
@@ -125,7 +125,7 @@ public class BookServiceTest {
         assertThat(resultsDto).hasSize(3);
         assertThat(resultsDto.get(0).getTitle()).isEqualTo(booksFromDB.get(0).getTitle());
         assertThat(resultsDto.get(1).getIsbn()).isEqualTo(booksFromDB.get(1).getIsbn());
-        verify(bookRepository, times(1)).findAll(pageable);
+        verify(bookRepository).findAll(pageable);
         verify(bookMapper, times(resultsDto.size())).toDto(any(Book.class));
         verifyNoMoreInteractions(bookRepository, bookMapper);
     }
@@ -148,7 +148,7 @@ public class BookServiceTest {
         String expected = "Can't get book by id " + invalidId;
         String actual = exception.getMessage();
         assertThat(actual).isEqualTo(expected);
-        verify(bookRepository, times(1)).findById(invalidId);
+        verify(bookRepository).findById(invalidId);
         verifyNoMoreInteractions(bookRepository);
     }
 }

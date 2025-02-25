@@ -3,7 +3,6 @@ package mate.academy.bookstore.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -66,9 +65,9 @@ public class ShoppingCartServiceTest {
         ShoppingCartDto actual = shoppingCartService.addCartItem(requestDto, userId);
         // Then
         assertThat(actual).isEqualTo(expected);
-        verify(bookRepository, times(1)).findById(1L);
-        verify(shoppingCartRepository, times(1)).findByUserId(userId);
-        verify(shoppingCartRepository, times(1)).save(shoppingCart);
+        verify(bookRepository).findById(1L);
+        verify(shoppingCartRepository).findByUserId(userId);
+        verify(shoppingCartRepository).save(shoppingCart);
         verifyNoMoreInteractions(bookRepository, shoppingCartRepository, shoppingCartMapper);
     }
 
@@ -90,7 +89,7 @@ public class ShoppingCartServiceTest {
         String expected = String.format("Book with id: %d is not found", requestDto.bookId());
         String actual = exception.getMessage();
         assertEquals(expected, actual);
-        verify(bookRepository, times(1)).findById(requestDto.bookId());
+        verify(bookRepository).findById(requestDto.bookId());
         verifyNoMoreInteractions(bookRepository);
     }
 
@@ -119,14 +118,10 @@ public class ShoppingCartServiceTest {
                 .updateShoppingCart(cartItemId, requestDto, userId);
         // Then
         assertEquals(expected, actual);
-        verify(shoppingCartRepository, times(1))
-                .findByUserId(userId);
-        verify(cartItemRepository, times(1))
-                .findByIdAndShoppingCartId(cartItemId, shoppingCart.getId());
-        verify(shoppingCartRepository, times(1))
-                .save(shoppingCart);
-        verify(shoppingCartMapper, times(1))
-                .toDto(shoppingCart);
+        verify(shoppingCartRepository).findByUserId(userId);
+        verify(cartItemRepository).findByIdAndShoppingCartId(cartItemId, shoppingCart.getId());
+        verify(shoppingCartRepository).save(shoppingCart);
+        verify(shoppingCartMapper).toDto(shoppingCart);
         verifyNoMoreInteractions(bookRepository, shoppingCartRepository, shoppingCartMapper);
     }
 
@@ -151,11 +146,10 @@ public class ShoppingCartServiceTest {
         ShoppingCartDto actual = shoppingCartService.deleteCartItem(cartItemId, userId);
         // Then
         assertEquals(expected, actual);
-        verify(shoppingCartRepository, times(1)).findByUserId(userId);
-        verify(cartItemRepository, times(1))
-                .findByIdAndShoppingCartId(cartItemId, shoppingCart.getId());
-        verify(shoppingCartRepository, times(1)).save(shoppingCart);
-        verify(shoppingCartMapper, times(1)).toDto(shoppingCart);
+        verify(shoppingCartRepository).findByUserId(userId);
+        verify(cartItemRepository).findByIdAndShoppingCartId(cartItemId, shoppingCart.getId());
+        verify(shoppingCartRepository).save(shoppingCart);
+        verify(shoppingCartMapper).toDto(shoppingCart);
         verifyNoMoreInteractions(bookRepository, shoppingCartRepository, shoppingCartMapper);
     }
 
@@ -174,8 +168,8 @@ public class ShoppingCartServiceTest {
         ShoppingCartDto actual = shoppingCartService.getShoppingCartByUserId(userId);
         // Then
         assertEquals(expected, actual);
-        verify(shoppingCartRepository, times(1)).findByUserId(userId);
-        verify(shoppingCartMapper, times(1)).toDto(shoppingCart);
+        verify(shoppingCartRepository).findByUserId(userId);
+        verify(shoppingCartMapper).toDto(shoppingCart);
         verifyNoMoreInteractions(shoppingCartRepository, shoppingCartMapper);
     }
 }

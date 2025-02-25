@@ -57,7 +57,7 @@ public class CategoryServiceTest {
         assertThat(resultsDto.get(0).name()).isEqualTo(categoryFromDB.get(0).getName());
         assertThat(resultsDto.get(1).description())
                 .isEqualTo(categoryFromDB.get(1).getDescription());
-        verify(categoryRepository, times(1)).findAll(pageable);
+        verify(categoryRepository).findAll(pageable);
         verify(categoryMapper, times(resultsDto.size())).toDto(any(Category.class));
         verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
@@ -78,7 +78,7 @@ public class CategoryServiceTest {
         String expected = "Can't get category by id " + invalidId;
         String actual = exception.getMessage();
         assertEquals(expected, actual);
-        verify(categoryRepository, times(1)).findById(invalidId);
+        verify(categoryRepository).findById(invalidId);
         verifyNoMoreInteractions(categoryRepository);
 
     }
@@ -100,7 +100,7 @@ public class CategoryServiceTest {
         CategoryDto savedCategoryDto = categoryService.save(categoryDto);
         //Then
         assertThat(savedCategoryDto).isEqualTo(categoryDto);
-        verify(categoryRepository, times(1)).save(category);
+        verify(categoryRepository).save(category);
         verifyNoMoreInteractions(categoryRepository, categoryMapper);
     }
 
@@ -121,7 +121,7 @@ public class CategoryServiceTest {
         String expected = "Can't get category by id " + invalidId;
         String actual = exception.getMessage();
         assertThat(actual).isEqualTo(expected);
-        verify(categoryRepository, times(1)).findById(invalidId);
+        verify(categoryRepository).findById(invalidId);
         verifyNoMoreInteractions(categoryRepository);
     }
 
@@ -141,7 +141,7 @@ public class CategoryServiceTest {
         String expected = EntityNotFoundExceptionMessage + invalidId;
         String actual = exception.getMessage();
         assertThat(actual).isEqualTo(expected);
-        verify(categoryRepository, times(1)).findById(invalidId);
+        verify(categoryRepository).findById(invalidId);
         verifyNoMoreInteractions(categoryRepository);
     }
 

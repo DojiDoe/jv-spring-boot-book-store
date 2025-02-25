@@ -96,7 +96,7 @@ public class ShoppingCartControllerTest {
             INSERT_BOOK_CLASSPATH,
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @WithUserDetails(value = "dojidoe@gmail.com")
-    @DisplayName("beebadoobee")
+    @DisplayName("Add cart item to shopping cart as user")
     void addBookToShoppingCart_ValidRequestDto_ShouldReturnShoppingCartDto() throws Exception {
         //Given
         CreateCartItemRequestDto requestDto = CartItemTestUtil
@@ -128,7 +128,7 @@ public class ShoppingCartControllerTest {
             INSERT_CART_ITEMS_CLASSPATH
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @WithUserDetails(value = "dojidoe@gmail.com")
-    @DisplayName("beebadoobee2")
+    @DisplayName("Get shopping cart as user")
     void getShoppingCart_ValidData_ShouldReturnShoppingCartDto() throws Exception {
         // Given
         ShoppingCartDto expected = ShoppingCartTestUtil
@@ -156,7 +156,7 @@ public class ShoppingCartControllerTest {
             INSERT_CART_ITEMS_CLASSPATH
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @WithUserDetails(value = "dojidoe@gmail.com")
-    @DisplayName("beebadoobee3")
+    @DisplayName("Update cartItem in shopping cart as user")
     void updateShoppingCart_ValidRequestDto_ShouldReturnShoppingCartDto() throws Exception {
         // Given
         Long cartItemIdToUpdate = 1L;
@@ -191,7 +191,7 @@ public class ShoppingCartControllerTest {
             INSERT_CART_ITEMS_CLASSPATH
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @WithUserDetails(value = "dojidoe@gmail.com")
-    @DisplayName("beebadoobee4")
+    @DisplayName("Delete cart Item from shopping cart as user")
     void deleteCartItem_ValidId_ShouldReturnShoppingCartDto() throws Exception {
         // Given
         Long cartItemIdToDelete = 1L;
